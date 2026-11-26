@@ -1,0 +1,38 @@
+
+[
+  {
+    "sample_id": "pii-001",
+    "text": "Contact John Smith at john.smith@example.com.",
+    "expected_entities": [
+      "PERSON",
+      "EMAIL_ADDRESS"
+    ]
+  },
+  {
+    "sample_id": "pii-002",
+    "text": "Please call me at 415-555-0132.",
+    "expected_entities": [
+      "PHONE_NUMBER"
+    ]
+  },
+  {
+    "sample_id": "pii-003",
+    "text": "My card number is 4111111111111111.",
+    "expected_entities": [
+      "CREDIT_CARD"
+    ]
+  },
+  {
+    "sample_id": "pii-004",
+    "text": "The project uses a public Kubernetes cluster.",
+    "expected_entities": []
+  },
+  {
+    "sample_id": "pii-005",
+    "text": "Jane Doe lives in San Francisco.",
+    "expected_entities": [
+      "PERSON",
+      "LOCATION"
+    ]
+  }
+]
