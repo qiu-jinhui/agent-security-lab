@@ -111,3 +111,46 @@ def test_gliner2_response_refusal():
     )
 
     assert report.decision.action == "ALLOW"
+
+from app.guardrails.detectors.gliner2_pii import (
+    GLiNER2PIIDetector,
+)
+from app.guardrails.schemas import DetectionRequest
+
+
+class MockPIIRuntime:
+
+    MODEL_NAME = "mock-pii"
+
+    def extract_entities(self, content, labels, threshold):
+        return {
+            "entities": {
+                "credit_card": [
+                    {
+                        "start": 0,
+                        "end": 16,
+                        "confidence": 0.99,
+                    }
+                ]
+            }
+        }
+
+
+def test_credit_card_is_high_risk():
+
+    detector = GLiNER2PIIDetector(
+        runtime=MockPIIRuntime()
+    )
+
+    result = detector.detect(
+        DetectionRequest(
+            trace_id="pii-high-risk-001",
+            stage="input",
+            content="4111111111111111",
+        )
+    )
+
+    assert result.detected is True
+    assert result.severity == "high"
+    assert result.entities[0]["source_entity_type"] == "credit_card"
+    assert result.entities[0]["entity_type"] == "PAYMENT_CARD"

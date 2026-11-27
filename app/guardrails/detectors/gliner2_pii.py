@@ -39,17 +39,17 @@ class GLiNER2PIIDetector(BaseDetector):
     ]
 
     HIGH_RISK = {
-        "PASSPORT_NUMBER",
-        "NATIONAL_ID_NUMBER",
-        "TAX_ID",
-        "BANK_ACCOUNT",
-        "IBAN",
-        "CREDIT_CARD",
-        "CARD_CVV",
-        "PASSWORD",
-        "API_KEY",
-        "ACCESS_TOKEN",
-        "RECOVERY_CODE"
+        "passport_number",
+        "national_id_number",
+        "tax_id",
+        "bank_account",
+        "iban",
+        "credit_card",
+        "card_cvv",
+        "password",
+        "api_key",
+        "access_token",
+        "recovery_code"
     }
 
     SUPPORTED_STAGES = {
