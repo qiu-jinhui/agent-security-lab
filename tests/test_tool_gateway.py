@@ -8,6 +8,7 @@ from app.security.tool_gateway import (
     ToolExecutionGateway
 )
 
+from app.tools.argument_schemas import TOOL_ARGUMENT_SCHEMAS
 
 @pytest.fixture
 def execution_counter():
@@ -47,7 +48,8 @@ def gateway(tools):
 
     return ToolExecutionGateway(
         authorization_engine=engine,
-        tools=tools
+        tools=tools,
+        argument_schemas=TOOL_ARGUMENT_SCHEMAS
     )
 
 
@@ -144,7 +146,7 @@ def test_invalid_arguments_do_not_execute(
         arguments={}
     )
 
-    assert result["status"] == "EXECUTION_ERROR"
+    assert result["status"] == "INVALID_ARGUMENTS"
     assert execution_counter["count"] == 0
 
 def test_operator_email_requires_approval_and_never_executes(
