@@ -42,5 +42,25 @@ TOOL_SCHEMA = [
                 "additionalProperties": False
             }
         }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_customer_profile",
+            "description": (
+                "Retrieve a customer profile "
+                "using the customer ID"
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "customer_id": {
+                        "type": "string"
+                    }
+                },
+                "required": ["customer_id"],
+                "additionalProperties": False
+            }
+        }
     }
 ]

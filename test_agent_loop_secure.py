@@ -12,6 +12,16 @@ from app.security.tool_gateway import (
     ToolExecutionGateway
 )
 
+from app.security.context import ExecutionContext
+
+from app.security.resource_authorization import (
+    ResourceAuthorizationEngine
+)
+
+from app.tools.argument_schemas import (
+    TOOL_ARGUMENT_SCHEMAS
+)
+
 from app.tools.registry import TOOLS
 from app.tools.schemas import TOOL_SCHEMA
 
@@ -36,7 +46,8 @@ authorization_engine = ToolAuthorizationEngine(
     allowed_tools_by_role={
         "user": {
             "get_weather",
-            "get_air_quality"
+            "get_air_quality",
+            "get_customer_profile"
         },
         "operator": {
             "get_weather",
@@ -50,12 +61,36 @@ authorization_engine = ToolAuthorizationEngine(
     }
 )
 
+# Trusted application identity.
+# Never derive these values from LLM output.
+
+TRUSTED_CONTEXT = ExecutionContext(
+    user_id="USER_001",
+    tenant_id="TENANT_A",
+    role="user"
+)
+
+# Mock resource access control.
+resource_authorizer = ResourceAuthorizationEngine(
+    access_control={
+        ("TENANT_A", "USER_001"): {
+            "CUSTOMER_001"
+        },
+        ("TENANT_A", "USER_002"): {
+            "CUSTOMER_002"
+        }
+    }
+)
 
 gateway = ToolExecutionGateway(
     authorization_engine=authorization_engine,
-    tools=TOOLS
+    tools=TOOLS,
+    argument_schemas=TOOL_ARGUMENT_SCHEMAS,
+    resource_authorizer=resource_authorizer,
+    resource_protected_tools={
+        "get_customer_profile"
+    }
 )
-
 
 SYSTEM_PROMPT = """
 You are a helpful assistant.
@@ -138,9 +173,10 @@ def run_agent(user_input: str):
 
                 # All tool calls must pass through Gateway.
                 result = gateway.execute(
-                    role=TRUSTED_ROLE,
+                    role=TRUSTED_CONTEXT.role,
                     tool_name=name,
-                    arguments=arguments
+                    arguments=arguments,
+                    context=TRUSTED_CONTEXT
                 )
 
             print(
